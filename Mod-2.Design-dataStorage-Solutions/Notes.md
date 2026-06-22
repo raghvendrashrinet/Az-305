@@ -1,5 +1,14 @@
 
+Exam Trap
 
+"Minimal management"
+→ Azure SQL Database
+
+"Almost 100% SQL Server compatibility"
+→ SQL Managed Instance
+
+"Need SQL Agent, OS access, third-party software"
+→ SQL Server on Azure VM
 
 ## Azure SQL Managed Instance
 It was created by Microsoft to solve a very specific problem for companies moving to the cloud: "Lift-and-Shift."  
