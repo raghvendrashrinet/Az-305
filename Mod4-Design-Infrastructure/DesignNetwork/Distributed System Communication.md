@@ -18,14 +18,16 @@ Direct HTTP/REST     gRPC / RPC               Messages                Events
 ```
 
 1.1 Messaging vs. Eventing
-```
-Feature,Message-Driven,Event-Driven
-Payload,Heavy; contains raw data or full job details.,Lightweight; metadata/state change notification.
-Intent,Request a specific downstream action.,Announce that a state change occurred.
-Coupling,Sender expects a specific consumer to handle it.,Publisher has no knowledge of subscribers.
-Guarantees,Guaranteed delivery (at-least-once / exactly-once).,Ephemeral or streamed; receivers choose to react.
-Azure Example,"Azure Service Bus, Azure Queue Storage","Azure Event Grid, Azure Event Hubs"
-```
+
+| Feature       | Message-Driven                                           | Event-Driven                                      |
+|---------------|----------------------------------------------------------|--------------------------------------------------|
+| Payload       | Heavy; contains raw data or full job details.             | Lightweight; metadata/state change notification. |
+| Intent        | Request a specific downstream action.                     | Announce that a state change occurred.           |
+| Coupling      | Sender expects a specific consumer to handle it.          | Publisher has no knowledge of subscribers.       |
+| Guarantees    | Guaranteed delivery (at-least-once / exactly-once).       | Ephemeral or streamed; receivers choose to react.|
+| Azure Example | Azure Service Bus, Azure Queue Storage                    | Azure Event Grid, Azure Event Hubs               |
+
+
 
 ### 2. Client-to-Server Topologies
 Client-to-server communication handles client requests (browsers, mobile apps, edge devices) interacting with backend application instances.
@@ -201,10 +203,12 @@ Communication logic (security, retries, circuit breaking, observability) is offl
 * Trade-Offs: Adds slight latency overhead and CPU/memory footprint per container instance.
 
 ### 4. Master Topology Decision Matrix
-Requirement / Scenario,Recommended Topology,Primary Protocol / Tech
-Immediate response required by end-user,Client-to-Server REST / GraphQL,"HTTP/2, HTTPS"
-Low-latency internal service query,Server-to-Server Direct RPC,gRPC over HTTP/2
-Guaranteed sequential task execution,Server-to-Server Message Queue,"Azure Service Bus, RabbitMQ"
-Broadcasting updates to N independent services,Event-Driven Publish-Subscribe,"Azure Event Grid, NATS"
-Real-time telemetry / event stream processing,Distributed Event Streaming,"Apache Kafka, Azure Event Hubs"
-Securing & routing internal microservice traffic,Service Mesh,"Istio, Linkerd, Dapr"
+| Requirement / Scenario                          | Recommended Topology              | Primary Protocol / Tech                  |
+|-------------------------------------------------|-----------------------------------|------------------------------------------|
+| Immediate response required by end-user         | Client-to-Server REST / GraphQL   | HTTP/2, HTTPS                            |
+| Low-latency internal service query              | Server-to-Server Direct RPC       | gRPC over HTTP/2                         |
+| Guaranteed sequential task execution            | Server-to-Server Message Queue    | Azure Service Bus, RabbitMQ              |
+| Broadcasting updates to N independent services  | Event-Driven Publish-Subscribe    | Azure Event Grid, NATS                   |
+| Real-time telemetry / event stream processing   | Distributed Event Streaming       | Apache Kafka, Azure Event Hubs           |
+| Securing & routing internal microservice traffic| Service Mesh                      | Istio, Linkerd, Dapr                     |
+
