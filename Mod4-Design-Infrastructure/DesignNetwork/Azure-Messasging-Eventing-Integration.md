@@ -190,7 +190,7 @@ How it works: Event Hubs acts as an append-only transaction log divided into par
 
 Consumer perspective: Consumers (like Azure Stream Analytics, Databricks, or custom worker apps) continuously scan/read through the partitions sequentially using an offset pointer (reading event #100, then #101, then #102...).
 ```
-[ Event Hubs Partition 1 ]
+                     [ Event Hubs Partition 1 ]
                      [ Event 1 ][ Event 2 ][ Event 3 ][ Event 4 ] ...
                                               ^
                                               |-- Read Pointer (Offset)
