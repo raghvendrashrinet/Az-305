@@ -29,6 +29,7 @@ Understanding when to choose Messages versus Events is a recurring topic in AZ-3
 | Primary Azure Service| Azure Service Bus, Azure Queue Storage                     | Azure Event Grid, Azure Event Hubs                        |
 
 #### 2. Azure Communication Services Decision Tree
+```
                               [ What type of data are you transferring? ]
                                                      |
                         +----------------------------+----------------------------+
@@ -42,7 +43,7 @@ Understanding when to choose Messages versus Events is a recurring topic in AZ-3
           |                           |                             |                           |
           v                           v                             v                           v
   Azure Service Bus          Azure Queue Storage            Azure Event Grid             Azure Event Hubs
-
+```
 ### 3. Deep Dive into Azure Integration Services
 ##### 3.1 Azure Service Bus (Enterprise Messaging)
 *Type: Message-driven broker.*  
@@ -84,3 +85,116 @@ Key Features for AZ-305:
 | Ingest high-throughput telemetry logs from 100,000 IoT devices for analytics  | Azure Event Hubs                       |
 | Simple worker queue exceeding 80 GB of total queued messages cheaply          | Azure Queue Storage                    |
 | Capture streaming data directly into Azure Data Lake with zero code           | Azure Event Hubs (Capture Feature)     |
+
+---
+---
+### Azure Event Hub
+
+Event Hubs $\rightarrow$ Stream Analytics $\rightarrow$ Storage / Power BI
+
+```
+  [ Data Producers ]
+(IoT Devices / Web Logs)
+        |
+        v
+ +----------------+
+ | Azure Event    |  <-- Ingests high-throughput real-time events
+ | Hubs           |
+ +----------------+
+    |          \
+    |           +---> [ Event Hubs Capture ] ---> [ Azure Data Lake Storage ]
+    |                                                (Long-term storage / cold path)
+    v
+ +----------------+
+ | Azure Stream   |  <-- Processes streaming data on the fly
+ | Analytics      |      (Filtering, aggregations, tumbling windows)
+ +----------------+
+    |
+    v
+ +----------------+
+ | Power BI       |  <-- Real-time dashboards & streaming visual alerts
+ +----------------+      (Hot path)
+```
+##### Breakdown of the Architecture
+**1. Ingestion: Azure Event Hubs**
+- Role: Serves as the high-throughput front door capable of receiving millions of events per second from IoT devices, app logs, or clickstreams.
+- Why it fits: It buffers data safely so downstream systems aren't overwhelmed by sudden spikes in traffic.
+
+**2. Archival (Storage): Event Hubs Capture or Blob Storage**
+- Role: Saves raw incoming data to Azure Blob Storage or Azure Data Lake Storage Gen2.
+- Why it fits: Known as the "Cold Path". It gives you a permanent, low-cost historical audit trail without needing custom code (via Event Hubs' built-in Capture feature).
+
+**3. Real-Time Processing: Azure Stream Analytics (ASA)**
+- Role: Executes continuous SQL queries on data as it flies through the stream (e.g., calculating 5-minute rolling averages or detecting anomalies).
+- Why it fits: It bridges raw streaming data directly into actionable metrics in real time with ultra-low latency.
+
+**4. Visualization: Power BI**
+- Role: Displays real-time streaming tiles, dashboards, and automated alerts.
+- Why it fits: Known as the "Hot Path". Decision-makers can watch live operational metrics update second-by-second instead of waiting for daily batch reports.
+
+---
+### Event Grid Architecture Pattern
+Event Grid is the core of Serverless & Event-Driven Automation.
+```
+   [ Event Publishers ]                                                  [ Event Handlers ]
+(Sources emitting state changes)                                   (Services reacting to state changes)
+                                                                
+ [ Azure Blob Storage ] --+                                      +--> [ Azure Functions ]
+  (e.g., File Uploaded)   |                                      |     (Triggers backend code)
+                          |                                      |
+  [ Azure Resource Group] +--->  +------------------------+  ----+--> [ Azure Logic Apps ]
+  (e.g., VM Created)      |--->  |    Azure Event Grid    |  ----+     (Triggers workflow/email)
+                          |      |                        |      |
+  [ Custom Applications ] +--->  +------------------------+  ----+--> [ Webhooks / APIs ]
+  (e.g., User Registered)                                        |     (Calls third-party API)
+                                                                 |
+                                                                 +--> [ Azure Service Bus ]
+                                                                       (Pushes to a queue)
+```
+#### 2. Key Components of Event Grid
+Events: What happened (e.g., Microsoft.Storage.BlobCreated). It contains lightweight metadata (URL, timestamp, event type), not the actual uploaded file.
+
+- Event Sources: Where it happened (Blob Storage, IoT Hub, Resource Groups, or your own custom app).
+
+- Topics: The endpoint where publishers send events.
+
+- Event Subscriptions: The routing mechanism that tells Event Grid where to send specific events. Filters can be set here (e.g., "only route if file extension is .png").
+
+- Event Handlers: The destination service reacting to the event (Azure Functions, Logic Apps, Event Hubs, Webhooks).
+
+#### 3. Why & When to Use Event Grid
+- `Push-Push Model` (Ultra-Low Latency): Unlike polling-based systems, Event Grid actively pushes notifications to receivers the millisecond an event occurs.
+
+- `Serverless Automation`: Perfect for reactive pipelines—e.g., automatically resizing an image the moment it lands in Azure Blob Storage.
+
+- `Massive Fan-Out`: A single publisher can emit an event, and Event Grid can route it simultaneously to hundreds of different downstream subscribers.
+
+- `Dead-Lettering & Retries`: Automatically retries delivery if a handler is down, and routes failed events to a Blob container for debugging.
+
+---
+**Event Grid = True Pub/Sub (Push-Push)**
+```
+[ Publisher ]
+       |
+       |  Emits: "Blob Created"
+       v
+ [ Event Grid ]
+    /        \
+   / PUSH     \ PUSH
+  v            v
+[ Azure ]    [ Webhook ]
+[ Function ]
+```
+**Event Hubs = Distributed Log / Stream Reader (Pull / Partition Scanning)**
+How it works: Event Hubs acts as an append-only transaction log divided into partitions. Incoming events are appended to the end of these log streams.
+
+Consumer perspective: Consumers (like Azure Stream Analytics, Databricks, or custom worker apps) continuously scan/read through the partitions sequentially using an offset pointer (reading event #100, then #101, then #102...).
+```
+[ Event Hubs Partition 1 ]
+                     [ Event 1 ][ Event 2 ][ Event 3 ][ Event 4 ] ...
+                                              ^
+                                              |-- Read Pointer (Offset)
+                                              |
+                                    [ Stream Consumer ]
+                                (Continuously scans/pulls)
+```
