@@ -3,8 +3,8 @@ In modern distributed systems, applications are broken into distinct componentsâ
 
 ### 1. Core Communication Paradigms
 ```
-+-----------------------------------+
-                  |  Distributed System Interaction  |
+                  +-----------------------------------+
+                  |  Distributed System Interaction   |
                   +-----------------------------------+
                                     |
             +-----------------------+-----------------------+
@@ -94,7 +94,7 @@ Backend services interact behind the firewall/API gateway using varied patterns 
 ##### Pattern 3.1: Synchronous gRPC / HTTP RPC
 One internal microservice calls another direct backend service over low-latency protocols like HTTP/2 or gRPC.
 ```
-+------------------+                    +---------------------+
+  +------------------+                    +---------------------+
   |  Order Service   |--- 1. gRPC Call -->| Inventory Service   |
   +------------------+                    +---------------------+
             |                                        |
@@ -107,7 +107,7 @@ One internal microservice calls another direct backend service over low-latency 
 ##### Pattern 3.2: Asynchronous Message Pipeline (Work Queue)
 Services process multi-step workflows sequentially by passing messages through queues.
 ```
-+--------------------+
+  +--------------------+
   | Video Ingest Svc   |
   +--------------------+
             |
@@ -142,7 +142,7 @@ Services process multi-step workflows sequentially by passing messages through q
 ##### Pattern 3.3: Event-Driven Publish-Subscribe (Fan-Out)
 A service broadcasts an event indicating a state change. Multiple downstream consumer services independently act on that event without the publisher's involvement.
 ```
-+----------------------+
+                        +----------------------+
                         | User Account Service |
                         +----------------------+
                                    |
@@ -166,7 +166,7 @@ A service broadcasts an event indicating a state change. Multiple downstream con
 ##### Pattern 3.4: Event Streaming / Event Sourcing & CQRS
 State changes are continuously written as an immutable append-only stream of log events (e.g., Apache Kafka, Azure Event Hubs). Downstream read services build local storage views (CQRS).
 ```
-+----------------------+
+                      +----------------------+
                       |  Payment Gateway Svc |
                       +----------------------+
                                  |
@@ -190,7 +190,7 @@ State changes are continuously written as an immutable append-only stream of log
 ##### Pattern 3.5: Service Mesh Proxying (Sidecar Pattern)
 Communication logic (security, retries, circuit breaking, observability) is offloaded to transparent proxy sidecars co-located with backend applications.
 ```
-+------------------------+                  +------------------------+
+  +------------------------+                  +------------------------+
   |  Service A (Container) |                  |  Service B (Container) |
   |  +------------------+  |                  |  +------------------+  |
   |  | Sidecar Proxy    |  |                  |  | Sidecar Proxy    |  |
