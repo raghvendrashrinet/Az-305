@@ -4,46 +4,46 @@
 Need Data Storage
         │
         ▼
-Structured?
+   Structured?
  │             │
 Yes            No
  │              │
 Azure SQL     Blob/File
 
 Need SQL Compatibility?
- │
+        │
 Managed Instance
 
 Need Full SQL Server?
- │
-SQL VM
+       │
+     SQL VM
 
 Need Global Scale?
- │
-Cosmos DB
+      │
+   Cosmos DB
 
 Need Analytics?
- │
-Data Lake
+      │
+  Data Lake
 
 Need Files?
- │
+    │
 Azure Files
 
 Need Archive?
- │
+    │
 Archive Tier
 
 Need DR?
- │
+    │
 GRS / GZRS
 
 Need Private Access?
- │
+       │
 Private Endpoint
 
 Need Migration?
- │
+     │
 Azure Migrate / DMS
 ```
 
