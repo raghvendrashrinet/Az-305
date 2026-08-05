@@ -1,5 +1,5 @@
 ## Define an Azure network topology
-  [link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/define-an-azure-network-topology)
+  [Documentation link](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/define-an-azure-network-topology)
   
 ### standard Hub-and-Spoke network topology in Azure
 
@@ -48,13 +48,10 @@ By default, Azure automatically creates system routes for each subnet. When you 
 To fix this and inspect traffic, we use the pattern you mentioned:
 
 Step-by-Step Traffic Flow (Spoke 1 to Spoke 2)
-The Trigger: A VM in Spoke 1 (10.1.0.4) wants to send data to a VM in Spoke 2 (10.2.0.4).
-
-The UDR Interception: Instead of letting the traffic leave the VNet directly, a Custom Route Table attached to the Spoke 1 subnet intercepts the request.
-
-The Next Hop: The UDR explicitly matches the traffic and forwards it to the Private IP of the Hub NVA/Firewall as the "Next Hop".
-
-The Hub Processing: The NVA receives the packet, evaluates its firewall rules (Allow/Deny), and if allowed, routes it down to Spoke 2.
+- The Trigger: A VM in Spoke 1 (10.1.0.4) wants to send data to a VM in Spoke 2 (10.2.0.4).
+- The UDR Interception: Instead of letting the traffic leave the VNet directly, a Custom Route Table attached to the Spoke 1 subnet intercepts the request.
+- The Next Hop: The UDR explicitly matches the traffic and forwards it to the Private IP of the Hub NVA/Firewall as the "Next Hop".
+- The Hub Processing: The NVA receives the packet, evaluates its firewall rules (Allow/Deny), and if allowed, routes it down to Spoke 2.
 
 #### 2. Creating the UDR (How it looks in practice)
 To force all traffic through your central Hub NVA, you typically define a Default Route (often called a catch-all route).
@@ -73,22 +70,19 @@ In Azure, you create a Route Table, add a route with the following properties, a
 While setting up manual UDRs and managing individual virtual appliances works well for smaller environments, large enterprises usually scale this using specific Azure enterprise patterns:
 #### Pattern A: Azure Firewall + Azure Virtual WAN (vWAN) — Highly Recommended
 Managing hundreds of UDRs across dozens of Spokes becomes a nightmare. In the real world, architects use Azure Virtual WAN with a Secured Virtual Hub.
-
-How it works: Azure automatically injects and manages the routing lines for you. When you turn on Azure Firewall in a vWAN hub, it instantly advertises 0.0.0.0/0 to all connected spokes automatically—no manual UDR creation required.
+- *How it works*: Azure automatically injects and manages the routing lines for you. When you turn on Azure Firewall in a vWAN hub, it instantly advertises 0.0.0.0/0 to all connected spokes automatically—`no manual UDR creation required`.
 
 #### Pattern B: Third-Party NVAs (Palo Alto, Check Point, Fortinet)
 Many enterprises prefer using the same firewall vendors in the cloud that they use on-premises.
 
-They deploy these NVAs in a High Availability (HA) cluster behind an Azure Internal Load Balancer (ILB) inside the Hub VNet.
+- They deploy these NVAs in a High Availability (HA) cluster behind an Azure Internal Load Balancer (ILB) inside the Hub VNet.
 
-In this scenario, your UDR's "Next Hop Address" points directly to the Internal Load Balancer's IP, which then balances the traffic across the active firewall appliances.
+- In this scenario, your UDR's "Next Hop Address" points directly to the Internal Load Balancer's IP, which then balances the traffic across the active firewall appliances.
 
 #### Pattern C: Gateway Transit for On-Premises
 For your hybrid connection to work cleanly across the architecture:
-
-The Hub VNet Peering setting must have "Use this virtual network's gateway or Route Server" checked.
-
-The Spoke VNet Peering setting must have "Use the remote virtual network's gateways" checked.
+- The Hub VNet Peering setting must have "Use this virtual network's gateway or Route Server" checked.
+- The Spoke VNet Peering setting must have "Use the remote virtual network's gateways" checked.
 
 This allows Spokes to utilize the Hub's VPN/ExpressRoute gateway seamlessly without needing a separate gateway in every single VNet.
 
