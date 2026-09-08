@@ -19,11 +19,30 @@ You simply shift from on-premises hardware to Azure infrastructure.
 Keep the same database engine but move it onto an **Azure fully managed database service (PaaS).**
 
 - **Target Azure Service:**  
-  - SQL Server → Azure SQL Managed Instance (near 100% compatibility) or Azure SQL Database (isolated cloud-native).  
+  - SQL Server → Azure `SQL Managed Instance` (near 100% compatibility) or `Azure SQL Database` (isolated cloud-native).  
   - Open Source → Azure Database for PostgreSQL or MySQL.  
 - **Best Used For:** Teams wanting to reduce operational overhead (backups, scaling, patching) without rewriting queries.  
 - **Pros & Cons:** Major reduction in admin work, built-in HA. Requires minor compatibility testing.
+```
+       AZURE SQL DATABASE                      AZURE SQL MANAGED INSTANCE
++------------------------------+              +------------------------------+
 
+|  +-------+  +-------+        |              |  +-------+  +-------+        |
+|  | DB 1  |  | DB 2  |        |              |  | DB 1  |  | DB 2  |        |
+|  +-------+  +-------+        |              |  +-------+  +-------+        |
+|                              |              +------------------------------+
+|  - Completely Isolated       |              |     Shared SQL Instance      |
+|  - Independent Scaling/RAM   |              |  (SQL Agent, Linked Servers, |
+|  - No Instance Boundaries    |              |   Shared Resources, Cross-DB)|
++==============================+              +==============================+
+
+|   MICROSOFT MANAGED LAYER    |              |   MICROSOFT MANAGED LAYER    |
++------------------------------+              +------------------------------+
+
+```
+
+- `Azure SQL Database `: Built for modern, cloud-native apps or microservices requiring isolated databases.  
+- `Azure SQL Managed Instance`: Built for `lifting and shifting` legacy on-premises workloads to the cloud with zero code changes.
 ---
 
 ## 3. Refactor / Rearchitect
