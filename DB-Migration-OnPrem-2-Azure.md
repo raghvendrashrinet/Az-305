@@ -73,3 +73,27 @@ Regardless of the migration plan, you must decide **how data transfers over the 
 | **Online Migration**  | Baseline backup restored in Azure; ongoing changes synced in real-time until cutover. | Near-Zero (minutes/seconds to switch connection string) | Azure Database Migration Service (DMS) |
 
 ---
+---
+
+To migrate your on-premises database workloads into either `Azure SQL Database or Azure SQL Managed Instance`, Microsoft provides a standardized, phased cloud migration framework.
+### The Migration Pipeline Flow
+```
++-----------------------+      +-----------------------+      +-----------------------+
+|  1. DISCOVER & ASSESS |      |       2. MIGRATE      |      |   3. CUTOVER & SYNC   |
+|                       |      |                       |      |                       |
+|  - Run DMA Tool       |=====>|  - Run Azure DMS      |=====>|  - Final Log Sync     |
+|  - Check Compatibility|      |  - Schema Conversion  |      |  - Point Connection   |
+|  - Check Feature Gaps |      |  - Data Copying       |      |    Strings to Azure   |
++-----------------------+      +-----------------------+      +-----------------------+
+```
+#### Phase 1: Discover & Assess (Using Data Migration Assistant)
+- `Compatibility Analysis`
+- `Target Recommendation`: It explicitly tells you if your database can go straight to `Azure SQL Database`, or if it has dependencies then to use `Azure SQL Managed Instance`.
+- `SKU Right-Sizing`: It analyzes your local CPU, memory, and IOPS usage to recommend the exact performance tier (vCores/DTUs).
+
+#### Phase 2: Migrate (Using Azure Database Migration Service)
+Once your schema is ready, you deploy the `Azure Database Migration Service (DMS)` in your Azure portal to handle the heavy lifting.
+ - ##### Path A: Online Migration (Near-Zero Downtime)
+        Ideal for production-critical systems that cannot afford to be offline.(While your users are still actively writing data)
+ - ##### Path B: Offline Migration
+        Ideal for dev/test environments or small databases 
