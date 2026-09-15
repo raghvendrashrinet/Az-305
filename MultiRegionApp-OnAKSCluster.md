@@ -1,5 +1,5 @@
 
-#### an Azure Kubernetes Service (AKS) cluster is region-scoped.
+##  Azure Kubernetes Service (AKS) cluster is region-scoped.
 Multi-Region Availability: To achieve high availability across multiple regions, you must deploy a separate AKS cluster in each target region and use a global routing service—such as `Azure Front Door` or `Azure Traffic Manager`—to load balance traffic between them.
 
 In a multi-region AKS setup, deploying an application across multiple clusters involves a combination of global traffic routing, centralized deployment pipelines, and cross-region state management.
