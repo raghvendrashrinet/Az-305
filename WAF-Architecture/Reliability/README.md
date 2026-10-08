@@ -3,6 +3,17 @@ the ability of a system to consistently perform its intended functions correctly
 
 <img width="438" height="282" alt="image" src="https://github.com/user-attachments/assets/f949b41b-6fe3-4220-bf1c-2ea62201c5fa" />
 
+```
+                  ┌─────────────────────────────────────────┐
+                  │               RELIABILITY               │
+                  └────────────────────┬────────────────────┘
+                                       │
+         ┌─────────────────────────────┼─────────────────────────────┐
+         ▼                             ▼                             ▼
+   Resilience                    BCDR                          Observability
+(Self-Healing,              (Backups, DR,                 (Monitoring, Logs,
+ Fault Tolerance)            RTO/RPO targets)                 Alerts & Health)
+```
 #### 1. Resilience (High Availability & Self-Healing):
 Designing the app so it continues running during localized failures or minor glitches without manual intervention (e.g., automatic failover, load balancing across Availability Zones, retry logic with exponential backoff, and local caching).
   - VM Level: Self-healing VM instances,VMSS, AKS: Pod Restart(Liveness Probe fail)
