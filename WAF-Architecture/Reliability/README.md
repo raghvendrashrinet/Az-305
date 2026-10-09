@@ -24,3 +24,11 @@ Designing the app so it continues running during localized failures or minor gli
 
 #### 3. Operational Health & Observability:
 Continuously monitoring system `metrics`, `logging` performance, and detecting drift or potential failures early so you can remediate them before users are impacted.
+
+---
+---
+### Example scenario
+
+Contoso Insurance is in the early design phase of developing a web application to process claims for their policyholders. They've figured out their core user and system flows. The workload team has identified several Azure services that they'll use: Azure App Service, Azure SQL Database, Azure AI services, Azure Event Grid, and Azure Logic Apps.
+
+- 'Azure App Service`:
